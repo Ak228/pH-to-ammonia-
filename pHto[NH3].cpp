@@ -11,7 +11,7 @@ using namespace std;
 
 // Note the constants below for a given buffer system.
 
-const double initial_pH = 6.45;
+const double initial_pH = 6.45; // subject to change
 
 const double buffer_concentration = 1; // molarity
 const double buffer_ratio = 0.63095734448017; // basic:acidic
