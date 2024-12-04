@@ -11,13 +11,17 @@ using namespace std;
 
 // Note the constants below for a given buffer system.
 
-const double monobasic_pKa = 7.20; // will prolly shift but wtv
+const double initial_pH = 6.45;
+
 const double buffer_concentration = 1; // molarity
 const double buffer_ratio = 0.63095734448017; // basic:acidic
 const double monobasic_concentration = 0.61313682015316;
 const double dibasic_concentration = (buffer_concentration - monobasic_concentration);
-const double initial_pH = 7;
-const double ammonia_monobasic_K = 112.184688; // equilibrium constant for nh3 + h2po4 = nh4(+) + HPO4(2-)
+const double monobasic_pKa = initial_pH - log10(buffer_ratio); // subject to change
+double Ka = pow(10,-(monobasic_pKa)); // monobasic Ka
+double Kb = 1.778 * pow(10,-5); // ammonia Kb
+double Kw = pow(10,-14); // water auto-ionization
+const double ammonia_monobasic_K = (Ka * Kb)/Kw; // equilibrium constant for nh3 + h2po4 = nh4(+) + HPO4(2-)
 
 
 // read in pH data: excel to txt to vector
@@ -36,7 +40,7 @@ void ammonia_concentration(const vector<double> &pHdata, ostream &output){
     double numer;
     double denom;
 
-    for(size_t i = 0; i < pHdata.size(); ++i) {
+    for (size_t i = 0; i < pHdata.size(); ++i) {
         new_buffer_ratio = pow(10,pHdata.at(i)-monobasic_pKa);
         dx = ((new_buffer_ratio*monobasic_concentration) - dibasic_concentration)/(1+new_buffer_ratio);
         numer = (dx*(dx+dibasic_concentration+(monobasic_concentration*ammonia_monobasic_K)-(dx*ammonia_monobasic_K)));
@@ -45,7 +49,6 @@ void ammonia_concentration(const vector<double> &pHdata, ostream &output){
 
         output << ammonia_concentration << endl; 
     } // end loop
-
 } // end function
 
 int main() {
